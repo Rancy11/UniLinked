@@ -33,7 +33,7 @@ const Post = ({ post, user }) => {
   return (
     <div className="post-card">
       <p>{post.content}</p>
-      <p className="post-author">Posted by: {post.author.name}</p>
+      <p className="post-author">Posted by: {post.author?.name || "Unknown User"}</p>
 
       <div className="comments-section">
         <h4>Comments</h4>
@@ -42,7 +42,7 @@ const Post = ({ post, user }) => {
           <div key={c._id} className="comment">
             {/* The `c.user.name` is what caused the rendering issue.
                 The backend must now send a populated user object. */}
-            <strong>{c.user.name}:</strong> {c.text}
+            <strong>{c.user?.name || "Unknown"}:</strong> {c.text}
           </div>
         ))}
 
