@@ -4,60 +4,112 @@ import API from "../api";
 const Post = ({ post, user }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [showComments, setShowComments] = useState(false);
+  const [posting, setPosting] = useState(false);
 
-  // Fetch comments for this post
+  // Fetch comments when expanded
   useEffect(() => {
-    // This fetches all existing comments for the post
-    API.get(`/posts/${post._id}/comments`)
-      .then((res) => setComments(res.data))
-      .catch((err) => console.error(err));
-  }, [post._id]);
+    if (showComments) {
+      API.get(`/posts/${post._id}/comments`)
+        .then((res) => setComments(res.data))
+        .catch((err) => console.error(err));
+    }
+  }, [post._id, showComments]);
 
-  // Handle adding a new comment
   const handleComment = () => {
     if (!newComment.trim()) return;
-
-    // Make the API call to add the comment
+    setPosting(true);
     API.post(`/posts/${post._id}/comments`, { text: newComment })
       .then((res) => {
-        // The backend should return the single new comment object.
-        // We add this new object to the existing comments array.
         setComments([...comments, res.data]);
-        
-        // Clear the input field after successful post
-        setNewComment(""); 
+        setNewComment("");
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error(err))
+      .finally(() => setPosting(false));
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleComment();
+    }
+  };
+
+  const authorName = post.author?.name || "Unknown User";
+  const initials = authorName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+
+  const timeAgo = (dateStr) => {
+    if (!dateStr) return "";
+    const diff = (Date.now() - new Date(dateStr)) / 1000;
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return `${Math.floor(diff / 86400)}d ago`;
   };
 
   return (
     <div className="post-card">
-      <p>{post.content}</p>
-      <p className="post-author">Posted by: {post.author?.name || "Unknown User"}</p>
-
-      <div className="comments-section">
-        <h4>Comments</h4>
-        {comments.length === 0 && <p>No comments yet.</p>}
-        {comments.map((c) => (
-          <div key={c._id} className="comment">
-            {/* The `c.user.name` is what caused the rendering issue.
-                The backend must now send a populated user object. */}
-            <strong>{c.user?.name || "Unknown"}:</strong> {c.text}
-          </div>
-        ))}
-
-        {user && (
-          <div className="add-comment">
-            <input
-              type="text"
-              placeholder="Add a comment..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-            />
-            <button onClick={handleComment}>Post</button>
-          </div>
-        )}
+      {/* Header */}
+      <div className="post-header">
+        <div className="post-avatar">{initials}</div>
+        <div className="post-meta">
+          <div className="post-author-name">{authorName}</div>
+          <div className="post-time">{timeAgo(post.createdAt)}</div>
+        </div>
       </div>
+
+      {/* Content */}
+      <div className="post-content">
+        <p>{post.content}</p>
+      </div>
+
+      {/* Divider */}
+      <div className="post-divider" />
+
+      {/* Actions */}
+      <div className="post-actions">
+        <button
+          className="post-action-btn"
+          onClick={() => setShowComments(!showComments)}
+        >
+          💬 {comments.length > 0 ? comments.length : ""} Comments
+        </button>
+      </div>
+
+      {/* Comments */}
+      {showComments && (
+        <div className="comments-section">
+          <h4>Comments</h4>
+
+          {comments.length === 0 ? (
+            <p className="no-comments">No comments yet. Be the first!</p>
+          ) : (
+            <div className="comments-list">
+              {comments.map((c) => (
+                <div key={c._id} className="comment">
+                  <strong>{c.user?.name || "Unknown"}:</strong>{" "}
+                  <span>{c.text}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {user && (
+            <div className="add-comment">
+              <input
+                type="text"
+                placeholder="Write a comment... (Enter to post)"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+              <button onClick={handleComment} disabled={posting || !newComment.trim()}>
+                {posting ? "..." : "Post"}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

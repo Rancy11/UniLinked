@@ -1,45 +1,123 @@
+/* ========== POST (Comment Styles) ========== */
+
+/* This file is for the Post component's inner styles (comments, etc.)
+   Most post-card styles are defined in Feed.css.
+   These are the comment-specific overrides. */
+
 .post-card {
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 6px;
-  background-color: #fff;
-  font-family: Arial, sans-serif;
+  /* Override / supplement Feed.css if needed */
 }
 
 .post-author {
-  font-size: 12px;
-  color: #555;
-  margin-bottom: 10px;
+  font-size: 12.5px;
+  color: #9ca3af;
+  margin: 0;
+  font-style: normal;
 }
 
+/* ---- Comments Section ---- */
 .comments-section {
-  margin-top: 10px;
+  margin-top: 4px;
   font-size: 14px;
 }
 
-.comment {
-  margin-bottom: 5px;
+.comments-section h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 12px;
 }
 
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.no-comments {
+  font-size: 13px;
+  color: #9ca3af;
+  font-style: italic;
+  margin: 0 0 12px;
+}
+
+.comment {
+  background: #f8f9ff;
+  border: 1px solid #eef0ff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  animation: fadeInUp 0.25s ease both;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.comment strong {
+  color: #1a1a2e;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.comment span {
+  color: #374151;
+  font-size: 13.5px;
+}
+
+/* ---- Add Comment ---- */
 .add-comment {
   display: flex;
-  gap: 5px;
-  margin-top: 10px;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .add-comment input {
   flex: 1;
-  padding: 5px 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1.5px solid #e5e7eb;
+  font-size: 14px;
+  font-family: inherit;
+  background: #f9fafc;
+  color: #1a1a2e;
+  outline: none;
+  transition: all 0.22s ease;
+}
+
+.add-comment input::placeholder {
+  color: #9ca3af;
+}
+
+.add-comment input:focus {
+  border-color: #667eea;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .add-comment button {
-  padding: 5px 10px;
+  padding: 10px 18px;
   border: none;
-  background-color: #4caf50;
+  background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
-  border-radius: 4px;
+  border-radius: 12px;
   cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+}
+
+.add-comment button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.42);
+}
+
+.add-comment button:active {
+  transform: translateY(0);
 }

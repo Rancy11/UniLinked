@@ -1,166 +1,245 @@
+/* ========== NAVBAR ========== */
 .navbar {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 16px 0;
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+  padding: 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 24px rgba(102, 126, 234, 0.35);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  height: 68px;
+  display: flex;
+  align-items: center;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .navbar-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 28px;
+  gap: 16px;
 }
 
+/* ---- Logo ---- */
 .navbar-logo {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: 800;
   text-decoration: none;
   color: white;
   letter-spacing: -0.5px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.navbar-nav {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
+.navbar-logo::before {
+  content: '🔗';
+  font-size: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.navbar-logo:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+/* ---- Nav wrapper ---- */
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+/* ---- Nav Pills ---- */
 .nav-pills {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   background: rgba(255, 255, 255, 0.1);
-  padding: 6px;
-  border-radius: 50px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 5px;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .nav-link {
-  padding: 10px 20px;
-  color: white;
+  padding: 8px 16px;
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  border-radius: 25px;
-  font-size: 14px;
+  border-radius: 30px;
+  font-size: 13.5px;
   font-weight: 500;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  position: relative;
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.22);
+  color: white;
   transform: translateY(-1px);
 }
 
+.nav-link.active,
+.nav-link:focus-visible {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* ---- User Section ---- */
 .user-section {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-left: 24px;
-  padding-left: 24px;
+  gap: 12px;
+  margin-left: 12px;
+  padding-left: 16px;
   border-left: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .user-avatar {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-weight: bold;
-  font-size: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  font-weight: 700;
+  font-size: 15px;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+  flex-shrink: 0;
+}
+
+.user-avatar:hover {
+  transform: scale(1.06);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
 }
 
 .user-details {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
 }
 
 .user-name {
   color: white;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
-  line-height: 1.2;
 }
 
 .user-role {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 11px;
   text-transform: capitalize;
+  letter-spacing: 0.02em;
 }
 
 .logout-btn {
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.15);
+  padding: 7px 15px;
+  background: rgba(255, 255, 255, 0.12);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 20px;
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 .logout-btn:hover {
-  background: rgba(255, 59, 48, 0.8);
-  border: 1px solid rgba(255, 59, 48, 0.8);
+  background: rgba(239, 68, 68, 0.75);
+  border-color: rgba(239, 68, 68, 0.5);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }
 
+/* ---- Auth Buttons ---- */
 .auth-buttons {
   display: flex;
-  gap: 12px;
+  gap: 10px;
+  align-items: center;
 }
 
 .auth-link {
-  padding: 10px 24px;
+  padding: 9px 22px;
   color: white;
   text-decoration: none;
   border-radius: 25px;
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .auth-link:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.22);
   transform: translateY(-1px);
 }
 
 .signup-btn {
-  padding: 10px 24px;
+  padding: 9px 22px;
   background: white;
   color: #667eea;
   text-decoration: none;
   border-radius: 25px;
   font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  border: none;
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.01em;
 }
 
 .signup-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.35);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .user-details { display: none; }
+  .nav-link { padding: 7px 11px; font-size: 12.5px; }
+}
+
+@media (max-width: 700px) {
+  .navbar-container { padding: 0 16px; }
+  .nav-pills { gap: 1px; padding: 4px; }
+  .nav-link { padding: 6px 9px; font-size: 12px; }
+  .navbar-logo { font-size: 18px; }
+  .user-section { gap: 8px; padding-left: 10px; margin-left: 8px; }
 }
