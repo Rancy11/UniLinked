@@ -124,7 +124,7 @@ export default function AchievementWall({ user }) {
 
         <div className="achievements-hero">
           <div className="container-narrow">
-            <h1 className="hof-title">Hall of Fame</h1>
+            <h1 className="hof-title">Wall of Fame</h1>
             <div className="cards-grid section">
               {top.map((t) => (
                 <AchievementCard key={t._id} item={t} onLike={like} onCongrats={congrats} onEdit={onEdit} onDelete={onDelete} canManage={canManage} />

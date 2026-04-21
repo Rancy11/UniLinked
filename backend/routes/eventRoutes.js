@@ -59,11 +59,27 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Increment likes
-router.post('/:id/like', async (req, res) => {
+// Toggle like for Event (auth required to prevent duplicates)
+router.post('/:id/like', auth, async (req, res) => {
   try {
-    const upd = await Event.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } }, { new: true });
-    res.json(upd);
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: 'Event not found' });
+
+    const likedBy = event.likedBy || [];
+    const idx = likedBy.findIndex(id => id.toString() === req.user.id.toString());
+
+    if (idx > -1) {
+      // Already liked — unlike
+      likedBy.splice(idx, 1);
+    } else {
+      // Not yet liked — like
+      likedBy.push(req.user.id);
+    }
+
+    event.likedBy = likedBy;
+    event.likes = likedBy.length;
+    await event.save();
+    res.json(event);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

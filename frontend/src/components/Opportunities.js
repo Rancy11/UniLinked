@@ -627,7 +627,7 @@ const Opportunities = () => {
                     )}
                   </div>
                   <div className="opp-detail-footer">
-                    {user && <button className="opp-apply-btn" onClick={handleApply}>✉️ Apply Now</button>}
+                    {user && !canPost && <button className="opp-apply-btn" onClick={handleApply}>✉️ Apply Now</button>}
                     {isOwner && (
                       <div className="opp-owner-btns">
                         <button className="opp-edit-btn" onClick={beginEdit}>✏️ Edit</button>

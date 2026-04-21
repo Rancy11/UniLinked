@@ -11,6 +11,8 @@ const AchievementSchema = new mongoose.Schema(
     type: { type: String, default: '' },
     likes: { type: Number, default: 0 },
     congrats: { type: Number, default: 0 },
+    likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    congratsBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true }
 );

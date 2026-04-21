@@ -6,8 +6,12 @@ const Post = ({ post, user }) => {
   const [newComment, setNewComment] = useState("");
   const [showComments, setShowComments] = useState(false);
   const [posting, setPosting] = useState(false);
+  const [likeCount, setLikeCount] = useState(Array.isArray(post.likes) ? post.likes.length : 0);
+  const [liked, setLiked] = useState(
+    user && Array.isArray(post.likes) ? post.likes.includes(user.id) || post.likes.some(l => l === user.id || l?._id === user.id) : false
+  );
+  const [likingInProgress, setLikingInProgress] = useState(false);
 
-  // Fetch comments when expanded
   useEffect(() => {
     if (showComments) {
       API.get(`/posts/${post._id}/comments`)
@@ -15,6 +19,28 @@ const Post = ({ post, user }) => {
         .catch((err) => console.error(err));
     }
   }, [post._id, showComments]);
+
+  const handleLike = async () => {
+    if (!user || likingInProgress) return;
+    setLikingInProgress(true);
+    // Optimistic update
+    const wasLiked = liked;
+    setLiked(!wasLiked);
+    setLikeCount(prev => wasLiked ? prev - 1 : prev + 1);
+    try {
+      const res = await API.post(`/posts/${post._id}/like`);
+      // Sync with server response
+      const serverLikes = Array.isArray(res.data.likes) ? res.data.likes : [];
+      setLikeCount(serverLikes.length);
+      setLiked(serverLikes.includes(user.id) || serverLikes.some(l => l === user.id || l?._id === user.id));
+    } catch (err) {
+      // Revert on failure
+      setLiked(wasLiked);
+      setLikeCount(prev => wasLiked ? prev + 1 : prev - 1);
+    } finally {
+      setLikingInProgress(false);
+    }
+  };
 
   const handleComment = () => {
     if (!newComment.trim()) return;
@@ -68,6 +94,19 @@ const Post = ({ post, user }) => {
 
       {/* Actions */}
       <div className="post-actions">
+        {user && (
+          <button
+            className="post-action-btn"
+            onClick={handleLike}
+            disabled={likingInProgress}
+            style={{
+              color: liked ? '#e74c3c' : undefined,
+              fontWeight: liked ? 700 : undefined,
+            }}
+          >
+            {liked ? '❤️' : '🤍'} {likeCount > 0 ? likeCount : ''} Like{likeCount !== 1 ? 's' : ''}
+          </button>
+        )}
         <button
           className="post-action-btn"
           onClick={() => setShowComments(!showComments)}

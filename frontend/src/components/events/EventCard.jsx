@@ -1,8 +1,12 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import ExactCountBadge from './ExactCountBadge';
 
-export default function EventCard({ item, onRegister, onLike, onEdit, onDelete, canManage, canRegister, onView }) {
+export default function EventCard({ item, onRegister, onLike, onEdit, onDelete, canManage, canRegister, onView, user }) {
   const countBadgeRef = useRef();
+  const likeKey = `event_liked_${item._id}`;
+  const [liked, setLiked] = useState(() => localStorage.getItem(likeKey) === 'true');
+  const [likeCount, setLikeCount] = useState(item.likes || 0);
+
   const { days, hours, minutes, isPast } = useMemo(() => {
     const now = new Date();
     const dt = new Date(item.dateTime);
@@ -13,6 +17,21 @@ export default function EventCard({ item, onRegister, onLike, onEdit, onDelete, 
     const m = Math.floor((diff / (1000 * 60)) % 60);
     return { days: d, hours: h, minutes: m, isPast: false };
   }, [item.dateTime]);
+
+  const handleLike = async () => {
+    if (liked) return; // prevent double-like without auth
+    setLiked(true);
+    setLikeCount(prev => prev + 1);
+    localStorage.setItem(likeKey, 'true');
+    try {
+      await onLike(item._id);
+    } catch (e) {
+      // revert on error
+      setLiked(false);
+      setLikeCount(prev => prev - 1);
+      localStorage.removeItem(likeKey);
+    }
+  };
 
   return (
     <div className="event-card">
@@ -37,10 +56,9 @@ export default function EventCard({ item, onRegister, onLike, onEdit, onDelete, 
             <span className="badge badge-green" style={{ marginLeft: 6 }}>Starts in {days}d {hours}h {minutes}m</span>
           )}
         </div>
-        
-        {/* Exact Count Badge */}
+
         <div style={{ marginBottom: 12 }}>
-          <ExactCountBadge 
+          <ExactCountBadge
             ref={countBadgeRef}
             eventId={item._id}
             maxCount={item.maxRegistrants}
@@ -55,24 +73,31 @@ export default function EventCard({ item, onRegister, onLike, onEdit, onDelete, 
         <div className="action-row">
           {!isPast && canRegister && (
             <button className="btn-primary btn-register" onClick={() => onRegister(item._id)}>
-              Register
+              🎟️ Register
             </button>
           )}
           <button className="btn-secondary btn-view" onClick={() => onView(item)}>
-            View Details
+            👁️ Details
           </button>
-          <button className="btn-outline btn-like" onClick={() => onLike(item._id)}>
-            👍 {item.likes || 0}
+          <button
+            className="btn-outline btn-like"
+            onClick={handleLike}
+            disabled={liked}
+            title={liked ? 'Already liked' : 'Like this event'}
+            style={{
+              opacity: liked ? 0.7 : 1,
+              cursor: liked ? 'not-allowed' : 'pointer',
+              color: liked ? '#6366f1' : undefined,
+              fontWeight: liked ? 700 : undefined,
+            }}
+          >
+            {liked ? '👍' : '👍'} {likeCount}
           </button>
         </div>
         {canManage && (
           <div className="action-row manage-actions">
-            <button className="btn-edit" onClick={() => onEdit(item)}>
-              ✏️ Edit
-            </button>
-            <button className="btn-delete" onClick={() => onDelete(item._id)}>
-              🗑️ Delete
-            </button>
+            <button className="btn-edit" onClick={() => onEdit(item)}>✏️ Edit</button>
+            <button className="btn-delete" onClick={() => onDelete(item._id)}>🗑️ Delete</button>
           </div>
         )}
       </div>

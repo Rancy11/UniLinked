@@ -1,6 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function AchievementCard({ item, onLike, onCongrats, onEdit, onDelete, canManage }) {
+  const likeKey = `ach_liked_${item._id}`;
+  const congratsKey = `ach_congrats_${item._id}`;
+
+  const [liked, setLiked] = useState(() => localStorage.getItem(likeKey) === 'true');
+  const [congratulated, setCongratulated] = useState(() => localStorage.getItem(congratsKey) === 'true');
+
+  const handleLike = () => {
+    if (liked) return;
+    setLiked(true);
+    localStorage.setItem(likeKey, 'true');
+    onLike(item._id);
+  };
+
+  const handleCongrats = () => {
+    if (congratulated) return;
+    setCongratulated(true);
+    localStorage.setItem(congratsKey, 'true');
+    onCongrats(item._id);
+  };
+
   return (
     <div className="ach-card">
       <div className="ach-card-header">
@@ -26,10 +46,22 @@ export default function AchievementCard({ item, onLike, onCongrats, onEdit, onDe
 
       <div className="ach-actions">
         <div className="ach-actions-left">
-          <button onClick={() => onLike(item._id)} className="btn-like">
-            ❤️ Like <span className="count-pill count-like">{item.likes || 0}</span>
+          <button
+            onClick={handleLike}
+            className="btn-like"
+            disabled={liked}
+            title={liked ? 'Already liked' : 'Like'}
+            style={{ opacity: liked ? 0.65 : 1, cursor: liked ? 'not-allowed' : 'pointer' }}
+          >
+            {liked ? '❤️' : '🤍'} Like <span className="count-pill count-like">{item.likes || 0}</span>
           </button>
-          <button onClick={() => onCongrats(item._id)} className="btn-congrats">
+          <button
+            onClick={handleCongrats}
+            className="btn-congrats"
+            disabled={congratulated}
+            title={congratulated ? 'Already congratulated' : 'Congratulate'}
+            style={{ opacity: congratulated ? 0.65 : 1, cursor: congratulated ? 'not-allowed' : 'pointer' }}
+          >
             🎉 Congratulate <span className="count-pill count-congrats">{item.congrats || 0}</span>
           </button>
         </div>

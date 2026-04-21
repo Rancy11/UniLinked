@@ -40,29 +40,55 @@ router.get('/top', async (_req, res) => {
   }
 });
 
-// Like
+// Like (toggle)
 router.post('/:id/like', async (req, res) => {
   try {
-    const updated = await Achievement.findByIdAndUpdate(
-      req.params.id,
-      { $inc: { likes: 1 } },
-      { new: true }
-    );
-    res.json(updated);
+    const userId = req.headers['x-user-id']; // optional client hint
+    const ach = await Achievement.findById(req.params.id);
+    if (!ach) return res.status(404).json({ message: 'Not found' });
+
+    const likedBy = ach.likedBy || [];
+    if (userId) {
+      const idx = likedBy.findIndex(id => id.toString() === userId.toString());
+      if (idx > -1) {
+        likedBy.splice(idx, 1);
+      } else {
+        likedBy.push(userId);
+      }
+      ach.likedBy = likedBy;
+      ach.likes = likedBy.length;
+    } else {
+      ach.likes = (ach.likes || 0) + 1;
+    }
+    await ach.save();
+    res.json(ach);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
-// Congratulate
+// Congratulate (toggle)
 router.post('/:id/congrats', async (req, res) => {
   try {
-    const updated = await Achievement.findByIdAndUpdate(
-      req.params.id,
-      { $inc: { congrats: 1 } },
-      { new: true }
-    );
-    res.json(updated);
+    const userId = req.headers['x-user-id'];
+    const ach = await Achievement.findById(req.params.id);
+    if (!ach) return res.status(404).json({ message: 'Not found' });
+
+    const congratsBy = ach.congratsBy || [];
+    if (userId) {
+      const idx = congratsBy.findIndex(id => id.toString() === userId.toString());
+      if (idx > -1) {
+        congratsBy.splice(idx, 1);
+      } else {
+        congratsBy.push(userId);
+      }
+      ach.congratsBy = congratsBy;
+      ach.congrats = congratsBy.length;
+    } else {
+      ach.congrats = (ach.congrats || 0) + 1;
+    }
+    await ach.save();
+    res.json(ach);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

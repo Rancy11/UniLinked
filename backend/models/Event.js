@@ -16,6 +16,7 @@ const EventSchema = new mongoose.Schema(
     imageUrl: { type: String, default: '' },
     registrants: { type: Number, default: 0 },
     likes: { type: Number, default: 0 },
+    likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     createdBy: { 
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'User', 
