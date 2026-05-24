@@ -329,8 +329,8 @@
 /* ---- Card Actions ---- */
 .ach-actions {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 8px;
   margin-top: 14px;
   padding-top: 12px;
   border-top: 1px solid #f1f5f9;
@@ -339,28 +339,32 @@
 .ach-actions-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .ach-actions-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .btn-like,
 .btn-congrats,
 .btn-danger {
-  padding: 7px 14px;
+  padding: 6px 10px;
   border-radius: 12px;
   font-weight: 700;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.18s ease;
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .btn-like {
@@ -499,7 +503,11 @@
 @media (max-width: 640px) {
   .achievements-hero { padding: 22px 16px 60px; border-radius: 0 0 24px 24px; }
   .hof-title { font-size: 1.6rem; }
-  .ach-card { padding: 16px; }
+  .ach-card { padding: 14px; }
+  .btn-like,
+  .btn-congrats,
+  .btn-danger { font-size: 11px; padding: 5px 9px; }
+  .count-pill { font-size: 10px; padding: 2px 6px; }
 }
 
 @keyframes fadeInUp {
